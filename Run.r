@@ -35,7 +35,7 @@ IPD<-600
 NITER<-5
 x_axis<-c(25,26,27,28,29,30,31)
 hid<-lapply(x_axis,function(x) c(7,x,5))
-tmp <- NN_TEST1(data_train,data_valid,hid=hid,iPd=IPD,nIter=NITER,xticks=x_axis,xlabel="c(5,x,3)")
+tmp <- NN_TEST1(data_train,data_valid,hid=hid,iPd=IPD,nIter=NITER,xticks=x_axis,xlable="c(5,x,3)")
 tmp[[1]]
 pdf('fig/TEST1_2.pdf'); tmp[[1]]; dev.off()
 
