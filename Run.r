@@ -12,8 +12,10 @@ rm(list=ls())
 library(neuralnet)
 library(ggplot2)
 rm(list=ls())
+source("data_path.r")
 source("Functions.r")
-data_raw <- read.csv("mnist_trainVal.csv", header=FALSE)
+
+data_raw <- read.csv(data_path, header=FALSE)
 data_pca <- data_raw[,2:785]
 data_pca <- data_pca[ , apply(data_pca, 2, var) != 0]
 
