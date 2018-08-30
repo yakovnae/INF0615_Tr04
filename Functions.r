@@ -40,7 +40,7 @@ my_data_partition <- function(data,p){
 }
 
 my_nn <- function(data_train,data_valid,
-                  hiddenV=c(5,3),iPd=100,nIter=10,seed_=42){
+                  hiddenV=c(5,3),iPd=100,nIter=10,seed_=42,method="NN"){
   #iPd - images per digit
   set.seed(seed_)
   oneVSall_train <- matrix(0,dim(data_train)[1],10)
@@ -70,7 +70,12 @@ my_nn <- function(data_train,data_valid,
       data_train2[num==(i-1),1] <- 1
       data_train2[num!=(i-1),1] <- 0
       tryCatch({
-                nnModel = neuralnet(formula=f, data=data_train2, hidden=hiddenV, linear.output=FALSE,threshold = 0.05) 
+                if (method=="NN"){
+                    nnModel = neuralnet(formula=f, data=data_train2, hidden=hiddenV, linear.output=FALSE,threshold = 0.05)
+                }
+                else{
+                    print("SVM IS NOT IMPLEMENTED YET");
+                } 
         },
         warning = function(w) {
             print(paste("NN Did not converge for digit",i-1,"and iteration",j)) 
