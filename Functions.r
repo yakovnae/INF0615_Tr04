@@ -150,15 +150,15 @@ my_data_work_samples <- function(data,n){
   return(ind_out)
 }
 
-my_lineplot <- function(l,lables=paste("v",1:length(l),sep=''),xticks=1:length(l[[1]]),xlable="",ylable="",title=""){
+my_lineplot <- function(l,lables=paste("v",1:length(l),sep=''),xticks=1:length(l[[1]]),xlabel="",ylabel="",title=""){
   x_axis <- rep(xticks, times=length(l))
   types  <- rep(lables,each=length(l[[1]]))
   values <- unlist(l)
   d <- data.frame(x=x_axis,type=types,v=values)
   g <- ggplot(data=d, aes(x=x, y=v))
   g <- g + geom_line(aes(color=type))
-  if (xlable != "") g <- g + xlab(xlable)
-  if (ylable != "") g <- g + ylab(ylable)
+  if (xlabel != "") g <- g + xlab(xlabel)
+  if (ylabel != "") g <- g + ylab(ylabel)
   if (title!="") g <- g+ labs(title=title)
   return(g)
 }
@@ -174,7 +174,7 @@ NN_TEST1 <- function(data_train,data_valid,hid,iPd=100,nIter=10,xticks=1:length(
     Sys.time() - t
     print(paste(format(Sys.time(), "%d-%m %X")," round", i, "of", length(hid),"  errorT=",1 - tmp[1],"  errorV=", 1 - tmp[2]) )
   }
-  return( list( my_lineplot(list(trainE,validE),c("train","valid"),xlable = xlable,ylable = "Error",xticks=xticks),
+  return( list( my_lineplot(list(trainE,validE),c("train","valid"),xlabel = xlabel,ylabel = "Error",xticks=xticks),
                 list(trainE,validE) ) )  
 }
 my_normalize <- function(dtrain,dvalid){
