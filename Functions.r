@@ -57,6 +57,7 @@ my_nn <- function(data_train,data_valid,
   nDigits <- 10 #10 digits
   pb <- txtProgressBar(min = 1, max = 10*nIter-1, style = 3)
   print(paste(format(Sys.time(), "%d-%m %X"),"MainFor:",iPd, "images per digit,",nIter,"iterations per digit"))
+ 
   for (j in 1:nIter){
     # create progress bar
     for (i in 1:nDigits){
@@ -68,8 +69,13 @@ my_nn <- function(data_train,data_valid,
 
       data_train2[num==(i-1),1] <- 1
       data_train2[num!=(i-1),1] <- 0
-      nnModel = neuralnet(formula=f, data=data_train2, hidden=hiddenV, linear.output=FALSE,threshold = 0.05) 
-    
+      tryCatch({
+                nnModel = neuralnet(formula=f, data=data_train2, hidden=hiddenV, linear.output=FALSE,threshold = 0.05) 
+        },
+        warning = function(w) {
+            print(paste("NN Did not converge for digit",i-1,"and iteration",j)) 
+        }
+      )
       oneVSall_train[,i] <- t(my_nn_compute(nnModel, data_train[,2:dim(data_train)[2]]) )
       oneVSall_valid[,i] <- t(my_nn_compute(nnModel, data_valid[,2:dim(data_valid)[2]]) )
       setTxtProgressBar(pb, nDigits*(j-1)+i)
@@ -93,7 +99,7 @@ my_nn_compute <- function(model,data){
   nnCompute  <- compute(model, data)
   prediction <- nnCompute$net.result
   th <- .5
-  prediction[prediction <  th] = 0
+  prediction[prediction <  th] = -1
   prediction[prediction >= th] = 1
   return(prediction)
 
@@ -172,7 +178,7 @@ NN_TEST1 <- function(data_train,data_valid,hid,iPd=100,nIter=10,xticks=1:length(
     trainE <- c(trainE, 1 - tmp[1])  
     validE <- c(validE, 1 - tmp[2]) 
     Sys.time() - t
-    print(paste(format(Sys.time(), "%d-%m %X")," round", i, "of", length(hid),"  errorT=",1 - tmp[1],"  errorV=", 1 - tmp[2]) )
+    print(paste(format(Sys.time(), "%d-%m %X")," round", i, "of", length(hid),"  errorT=",round(1 - tmp[1],2),"  errorV=", round(1 - tmp[2],2)) )
   }
   return( list( my_lineplot(list(trainE,validE),c("train","valid"),xlabel = xlabel,ylabel = "Error",xticks=xticks),
                 list(trainE,validE) ) )  
