@@ -1,0 +1,63 @@
+##########################################
+# INF-0615 - Machine Learning            #
+# Final Exercise - Digit Classification	 #
+# Nomes: Ygor Pereira                    #
+#        Yakov Nae                       #
+##########################################
+
+# Este foi o melhor metodo para previsao
+# Este arquivo deve ser rodado para o teste com o arquivo de teste final
+
+timestamp()
+
+#ARQUIVOS A SEREM USADOS
+print("READ DATA")
+#Treino
+data_all <- read.csv("mnist_trainVal.csv", header=FALSE)
+
+########   (FAVOR DEFINIR O NOME DO ARQUIVO DO TESTE)  #########
+#Teste 
+data_test <- read.csv("mnist_testVal.csv", header=FALSE)
+
+library(kernlab)
+set.seed(42)
+
+#slit train and test data from total
+rows <- nrow(data_all)
+cols <- ncol(data_all)
+ntrain <- round(rows*0.8) # number of training examples
+tindex <- sample(rows,ntrain) # indices of training samples
+
+data_train <- data_all[tindex,]
+
+######## LINEAR-SVM ############
+
+xtrain <- as.matrix(data_train[,2:cols])
+ytrain <- as.factor(data_train[,1])
+
+# Compute accuracy
+calculateAccuracy <- function(svp, xdata, ytestdata, yprediction){
+  
+  sum(yprediction==ytestdata)/length(ytestdata)
+  
+  return(sum(yprediction==ytestdata)/length(ytestdata))
+}
+########## PREDICT WITH SVM #############
+
+xtest <- data_test[,2:cols]
+ytest <- data_test[,1] 
+
+C <- 1e-06
+print("CALCULATE SVM")
+svp <- ksvm(xtrain,ytrain,type="C-svc",kernel="vanilladot",C=C,scaled=c())
+
+print("PREDICT WITH SVM")
+ypred = predict(svp,xtest)
+
+print(as.matrix(table(Actual = ytest, Predicted = ypred)))
+
+acc <- calculateAccuracy(svp, xtest, ytest, ypred)
+
+print(paste("ACCURACY = ", (acc * 100), "%"))
+
+timestamp()
