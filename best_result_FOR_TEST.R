@@ -17,7 +17,7 @@ data_all <- read.csv("mnist_trainVal.csv", header=FALSE)
 
 ########   (FAVOR DEFINIR O NOME DO ARQUIVO DO TESTE)  #########
 #Teste 
-data_test <- read.csv("mnist_testVal.csv", header=FALSE)
+data_test <- read.csv("mnist_test.csv", header=FALSE)
 
 library(kernlab)
 set.seed(42)
