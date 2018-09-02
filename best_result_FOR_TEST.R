@@ -13,25 +13,17 @@ timestamp()
 #ARQUIVOS A SEREM USADOS
 print("READ DATA")
 #Treino
-data_all <- read.csv("mnist_trainVal.csv", header=FALSE)
+data_train <- read.csv("mnist_trainVal.csv", header=FALSE)
 
-########   (FAVOR DEFINIR O NOME DO ARQUIVO DO TESTE)  #########
 #Teste 
 data_test <- read.csv("mnist_test.csv", header=FALSE)
 
 library(kernlab)
 set.seed(42)
 
-#slit train and test data from total
-rows <- nrow(data_all)
-cols <- ncol(data_all)
-ntrain <- round(rows*0.8) # number of training examples
-tindex <- sample(rows,ntrain) # indices of training samples
-
-data_train <- data_all[tindex,]
 
 ######## LINEAR-SVM ############
-
+cols <- ncol(data_train)
 xtrain <- as.matrix(data_train[,2:cols])
 ytrain <- as.factor(data_train[,1])
 

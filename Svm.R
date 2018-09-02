@@ -18,7 +18,7 @@ data_all <- read.csv(data_path, header=FALSE)
 #slit train and test data from total
 rows <- nrow(data_all)
 cols <- ncol(data_all)
-ntrain <- round(rows*0.6) # number of training examples
+ntrain <- round(rows*0.8) # number of training examples
 tindex <- sample(rows,ntrain) # indices of training samples
 
 data_train <- data_all[tindex,]
