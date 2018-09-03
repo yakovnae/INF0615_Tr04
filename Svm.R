@@ -8,10 +8,16 @@
 #install.packages("kernlab")
 #install.packages("e1071"")
 
+timestamp()
+library(neuralnet)
+library(ggplot2)
+source("Functions.r")
+
+#Default SVM OvO
+
 library(kernlab)
 set.seed(42)
 
-# load the toy datasets
 source("data_path.r")
 data_all <- read.csv(data_path, header=FALSE)
 
@@ -80,4 +86,12 @@ print(paste('Best C = ', bestC, " with accurary = ", bestAcc))
 df <- data.frame(ACC=accs, C=cs)
 print(df)
 
+##### SVM One VS ALL #########
+timestamp()
+set.seed(42)
+
+tmp <- SVM_TEST(data_train, data_test, CList, 1, 1000)
+tmp[[1]]
+
+timestamp()
 
