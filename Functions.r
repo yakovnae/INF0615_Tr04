@@ -40,7 +40,7 @@ my_data_partition <- function(data,p){
 }
 
 my_nn <- function(data_train,data_valid,
-                  hiddenV=c(5,3),iPd=100,nIter=10,seed_=42,method="NN"){
+                  hiddenV=c(5,3),iPd=100,nIter=10,seed_=42,method="NN",C=1){
   #iPd - images per digit
   set.seed(seed_)
   oneVSall_train <- matrix(0,dim(data_train)[1],10)
@@ -74,15 +74,22 @@ my_nn <- function(data_train,data_valid,
                     nnModel = neuralnet(formula=f, data=data_train2, hidden=hiddenV, linear.output=FALSE,threshold = 0.05)
                 }
                 else{
-                    print("SVM IS NOT IMPLEMENTED YET");
+                    nnModel = ksvm(data_train2[,2:ncol(data_train2)],num,type="C-svc",kernel="vanilladot",C=C,scaled=c())
                 } 
         },
         warning = function(w) {
             print(paste("NN Did not converge for digit",i-1,"and iteration",j)) 
         }
       )
-      oneVSall_train[,i] <- t(my_nn_compute(nnModel, data_train[,2:dim(data_train)[2]]) )
-      oneVSall_valid[,i] <- t(my_nn_compute(nnModel, data_valid[,2:dim(data_valid)[2]]) )
+      if (method=="NN"){
+        oneVSall_train[,i] <- t(my_nn_compute(nnModel, data_train[,2:dim(data_train)[2]]) )
+        oneVSall_valid[,i] <- t(my_nn_compute(nnModel, data_valid[,2:dim(data_valid)[2]]) )
+      }
+      else{
+        oneVSall_train[,i] <- predict(model,data)
+        oneVSall_valid[,i] <- predict(model,data)
+      } 
+      
       setTxtProgressBar(pb, nDigits*(j-1)+i)
     }
   }
@@ -199,4 +206,18 @@ my_normalize <- function(dtrain,dvalid){
   dvalid[,1:n] <- sweep(dvalid[,1:n], 2, stdTrain,  "/")
   
   return(list(dtrain,dvalid))
+}
+SVM_TEST <- function(data_train,data_valid, C=c(1),nIter=10,iPd=100){
+  trainE<-c()
+  validE<-c()
+  for (i in 1:length(C)){
+    t <- Sys.time();
+    tmp <- my_nn(data_train,data_valid,C=C[i],nIter=nIter,iPd=iPd)
+    trainE <- c(trainE, 1 - tmp[1])  
+    validE <- c(validE, 1 - tmp[2]) 
+    Sys.time() - t
+    print(paste(format(Sys.time(), "%d-%m %X")," round", i, "of", length(C),"  errorT=",round(1 - tmp[1],2),"  errorV=", round(1 - tmp[2],2)) )
+  }
+  return( list( my_lineplot(list(trainE,validE),c("train","valid"),xlabel = "C",ylabel = "Error"),
+                list(trainE,validE) ) )  
 }
